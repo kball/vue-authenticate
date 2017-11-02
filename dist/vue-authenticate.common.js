@@ -83,10 +83,10 @@ function objectExtend(a, b) {
 
 /**
  * Assemble url from two segments
- * 
+ *
  * @author Sahat Yalkabov <https://github.com/sahat>
  * @copyright Method taken from https://github.com/sahat/satellizer
- * 
+ *
  * @param  {String} baseUrl Base url
  * @param  {String} url     URI
  * @return {String}
@@ -108,10 +108,10 @@ function joinUrl(baseUrl, url) {
 
 /**
  * Get full path based on current location
- * 
+ *
  * @author Sahat Yalkabov <https://github.com/sahat>
  * @copyright Method taken from https://github.com/sahat/satellizer
- * 
+ *
  * @param  {Location} location
  * @return {String}
  */
@@ -124,10 +124,10 @@ function getFullUrlPath(location) {
 
 /**
  * Parse query string variables
- * 
+ *
  * @author Sahat Yalkabov <https://github.com/sahat>
  * @copyright Method taken from https://github.com/sahat/satellizer
- * 
+ *
  * @param  {String} Query string
  * @return {String}
  */
@@ -149,7 +149,7 @@ function parseQueryString(str) {
  * Decode base64 string
  * @author Sahat Yalkabov <https://github.com/sahat>
  * @copyright Method taken from https://github.com/sahat/satellizer
- * 
+ *
  * @param  {String} str base64 encoded string
  * @return {Object}
  */
@@ -254,6 +254,17 @@ function formatCookie(key, value, options) {
     encodeURIComponent(value),
     formatOptions(options)
   ].join('');
+}
+
+function getCookieDomain() {
+  // Directly check typeof as going through isUndefined seems to break in server environment
+  return typeof window === 'undefined' ? '' : ("" + (window.location.hostname));
+}
+
+function getRedirectUri(path) {
+  if ( path === void 0 ) path = '';
+
+  return typeof window === 'undefined' ? path : ("" + (window.location.origin) + path);
 }
 
 // Store setTimeout reference so promise-polyfill will be unaffected by
@@ -495,7 +506,7 @@ var defaultOptions = {
   storageType: 'localStorage',
   storageNamespace: 'vue-authenticate',
   cookieStorage: {
-    domain: window.location.hostname,
+    domain: getCookieDomain(),
     path: '/',
     secure: false
   },
@@ -537,7 +548,7 @@ var defaultOptions = {
       name: 'facebook',
       url: '/auth/facebook',
       authorizationEndpoint: 'https://www.facebook.com/v2.5/dialog/oauth',
-      redirectUri: window.location.origin + '/',
+      redirectUri: getRedirectUri('/'),
       requiredUrlParams: ['display', 'scope'],
       scope: ['email'],
       scopeDelimiter: ',',
@@ -550,7 +561,7 @@ var defaultOptions = {
       name: 'google',
       url: '/auth/google',
       authorizationEndpoint: 'https://accounts.google.com/o/oauth2/auth',
-      redirectUri: window.location.origin,
+      redirectUri: getRedirectUri(),
       requiredUrlParams: ['scope'],
       optionalUrlParams: ['display'],
       scope: ['profile', 'email'],
@@ -565,7 +576,7 @@ var defaultOptions = {
       name: 'github',
       url: '/auth/github',
       authorizationEndpoint: 'https://github.com/login/oauth/authorize',
-      redirectUri: window.location.origin,
+      redirectUri: getRedirectUri(),
       optionalUrlParams: ['scope'],
       scope: ['user:email'],
       scopeDelimiter: ' ',
@@ -577,7 +588,7 @@ var defaultOptions = {
       name: 'instagram',
       url: '/auth/instagram',
       authorizationEndpoint: 'https://api.instagram.com/oauth/authorize',
-      redirectUri: window.location.origin,
+      redirectUri: getRedirectUri(),
       requiredUrlParams: ['scope'],
       scope: ['basic'],
       scopeDelimiter: '+',
@@ -589,7 +600,7 @@ var defaultOptions = {
       name: 'twitter',
       url: '/auth/twitter',
       authorizationEndpoint: 'https://api.twitter.com/oauth/authenticate',
-      redirectUri: window.location.origin,
+      redirectUri: getRedirectUri(),
       oauthType: '1.0',
       popupOptions: { width: 495, height: 645 }
     },
@@ -598,7 +609,7 @@ var defaultOptions = {
       name: 'bitbucket',
       url: '/auth/bitbucket',
       authorizationEndpoint: 'https://bitbucket.org/site/oauth2/authorize',
-      redirectUri: window.location.origin + '/',
+      redirectUri: getRedirectUri('/'),
       optionalUrlParams: ['scope'],
       scope: ['email'],
       scopeDelimiter: ' ',
@@ -610,7 +621,7 @@ var defaultOptions = {
       name: 'linkedin',
       url: '/auth/linkedin',
       authorizationEndpoint: 'https://www.linkedin.com/oauth/v2/authorization',
-      redirectUri: window.location.origin,
+      redirectUri: getRedirectUri(),
       requiredUrlParams: ['state'],
       scope: ['r_emailaddress'],
       scopeDelimiter: ' ',
@@ -623,7 +634,7 @@ var defaultOptions = {
       name: 'live',
       url: '/auth/live',
       authorizationEndpoint: 'https://login.live.com/oauth20_authorize.srf',
-      redirectUri: window.location.origin,
+      redirectUri: getRedirectUri(),
       requiredUrlParams: ['display', 'scope'],
       scope: ['wl.emails'],
       scopeDelimiter: ' ',
@@ -636,7 +647,7 @@ var defaultOptions = {
       name: null,
       url: '/auth/oauth1',
       authorizationEndpoint: null,
-      redirectUri: window.location.origin,
+      redirectUri: getRedirectUri(),
       oauthType: '1.0',
       popupOptions: null
     },
@@ -645,7 +656,7 @@ var defaultOptions = {
       name: null,
       url: '/auth/oauth2',
       clientId: null,
-      redirectUri: window.location.origin,
+      redirectUri: getRedirectUri(),
       authorizationEndpoint: null,
       defaultUrlParams: ['response_type', 'client_id', 'redirect_uri'],
       requiredUrlParams: null,
@@ -668,7 +679,7 @@ var defaultOptions = {
 
 var CookieStorage = function CookieStorage(defaultOptions) {
   this._defaultOptions = objectExtend({
-    domain: window.location.hostname,
+    domain: getCookieDomain(),
     expires: null,
     path: '/',
     secure: false
