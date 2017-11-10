@@ -506,7 +506,8 @@ var defaultOptions = {
   cookieStorage: {
     domain: getCookieDomain(),
     path: '/',
-    secure: false
+    secure: false,
+    getCookieFn: null,
   },
   requestDataKey: 'data',
   responseDataKey: 'data',
@@ -680,7 +681,8 @@ var CookieStorage = function CookieStorage(defaultOptions) {
     domain: getCookieDomain(),
     expires: null,
     path: '/',
-    secure: false
+    secure: false,
+    getCookieFn: this._getCookie,
   }, defaultOptions);
 };
 
@@ -691,7 +693,8 @@ CookieStorage.prototype.setItem = function setItem (key, value) {
 };
 
 CookieStorage.prototype.getItem = function getItem (key) {
-  var cookies = parseCookies(this._getCookie());
+  var options = objectExtend({}, this._defaultOptions);
+  var cookies = parseCookies(options.getCookieFn());
   return cookies.hasOwnProperty(key) ? cookies[key] : null;
 };
 
